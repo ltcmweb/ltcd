@@ -15,18 +15,10 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/ltcmweb/ltcd/btcec/v2/schnorr"
-	"github.com/ltcmweb/ltcd/txscript"
-	"github.com/ltcmweb/ltcd/wire"
+	"github.com/ltcsuite/ltcd/btcec/v2/schnorr"
+	"github.com/ltcsuite/ltcd/txscript"
+	"github.com/ltcsuite/ltcd/wire"
 )
-
-// isFinalized considers this input finalized if it contains at least one of
-// the FinalScriptSig or FinalScriptWitness are filled (which only occurs in a
-// successful call to Finalize*).
-func isFinalized(p *Packet, inIndex int) bool {
-	input := p.Inputs[inIndex]
-	return input.FinalScriptSig != nil || input.FinalScriptWitness != nil
-}
 
 // isFinalizableWitnessInput returns true if the target input is a witness UTXO
 // that can be finalized.
@@ -55,7 +47,7 @@ func isFinalizableWitnessInput(pInput *PInput) bool {
 			// For each of the script spend signatures we need a
 			// corresponding tap script leaf with the control block.
 			for _, sig := range pInput.TaprootScriptSpendSig {
-				_, err := FindLeafScript(pInput, sig.LeafHash)
+				_, err := findLeafScript(pInput, sig.LeafHash)
 				if err != nil {
 					return false
 				}
@@ -168,7 +160,8 @@ func isFinalizable(p *Packet, inIndex int) bool {
 // returning true with no error if it succeeds, OR if the input has already
 // been finalized.
 func MaybeFinalize(p *Packet, inIndex int) (bool, error) {
-	if isFinalized(p, inIndex) {
+	pInput := p.Inputs[inIndex]
+	if pInput.isFinalized() {
 		return true, nil
 	}
 
@@ -186,12 +179,14 @@ func MaybeFinalize(p *Packet, inIndex int) (bool, error) {
 // MaybeFinalizeAll attempts to finalize all inputs of the psbt.Packet that are
 // not already finalized, and returns an error if it fails to do so.
 func MaybeFinalizeAll(p *Packet) error {
-	for i := range p.UnsignedTx.TxIn {
+	for i := range p.Inputs {
 		success, err := MaybeFinalize(p, i)
 		if err != nil || !success {
 			return err
 		}
 	}
+
+	// TODO: Finalize MWEB components, which should remove everything except the extractable component fields
 
 	return nil
 }
@@ -242,30 +237,13 @@ func Finalize(p *Packet, inIndex int) error {
 	return nil
 }
 
-// checkFinalScriptSigWitness checks whether a given input in the psbt.Packet
-// struct already has the fields 07 (FinalInScriptSig) or 08 (FinalInWitness).
-// If so, it returns true. It does not modify the Psbt.
-func checkFinalScriptSigWitness(p *Packet, inIndex int) bool {
-	pInput := p.Inputs[inIndex]
-
-	if pInput.FinalScriptSig != nil {
-		return true
-	}
-
-	if pInput.FinalScriptWitness != nil {
-		return true
-	}
-
-	return false
-}
-
 // finalizeNonWitnessInput attempts to create a PsbtInFinalScriptSig field for
 // the input at index inIndex, and removes all other fields except for the UTXO
 // field, for an input of type non-witness, or returns an error.
 func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 	// If this input has already been finalized, then we'll return an error
 	// as we can't proceed.
-	if checkFinalScriptSigWitness(p, inIndex) {
+	if p.Inputs[inIndex].isFinalized() {
 		return ErrInputAlreadyFinalized
 	}
 
@@ -366,7 +344,7 @@ func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 func finalizeWitnessInput(p *Packet, inIndex int) error {
 	// If this input has already been finalized, then we'll return an error
 	// as we can't proceed.
-	if checkFinalScriptSigWitness(p, inIndex) {
+	if p.Inputs[inIndex].isFinalized() {
 		return ErrInputAlreadyFinalized
 	}
 
@@ -505,7 +483,7 @@ func finalizeWitnessInput(p *Packet, inIndex int) error {
 func finalizeTaprootInput(p *Packet, inIndex int) error {
 	// If this input has already been finalized, then we'll return an error
 	// as we can't proceed.
-	if checkFinalScriptSigWitness(p, inIndex) {
+	if p.Inputs[inIndex].isFinalized() {
 		return ErrInputAlreadyFinalized
 	}
 
@@ -545,7 +523,7 @@ func finalizeTaprootInput(p *Packet, inIndex int) error {
 		// multiple possible execution paths at the same time is
 		// currently not supported by this library.
 		targetLeafHash := pInput.TaprootScriptSpendSig[0].LeafHash
-		leafScript, err := FindLeafScript(pInput, targetLeafHash)
+		leafScript, err := findLeafScript(pInput, targetLeafHash)
 		if err != nil {
 			return fmt.Errorf("control block for script spend " +
 				"signature not found")
