@@ -397,16 +397,18 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 			if kvPair.keyData != nil || len(kvPair.valueData) != 32 {
 				return nil, ErrInvalidPsbtFormat
 			}
-			txOffset = mw.ReadBlindingFactor(kvPair.valueData)
-			if txOffset == nil {
+			txOffset = new(mw.BlindingFactor)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, txOffset)
+			if err != nil {
 				return nil, ErrInvalidPsbtFormat
 			}
 		case MwebTxStealthOffsetType:
 			if kvPair.keyData != nil || len(kvPair.valueData) != 32 {
 				return nil, ErrInvalidPsbtFormat
 			}
-			stealthOffset = mw.ReadBlindingFactor(kvPair.valueData)
-			if stealthOffset == nil {
+			stealthOffset = new(mw.BlindingFactor)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, stealthOffset)
+			if err != nil {
 				return nil, ErrInvalidPsbtFormat
 			}
 		case MwebKernelCountType:

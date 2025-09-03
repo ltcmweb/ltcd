@@ -514,8 +514,9 @@ func (pi *PInput) deserialize(r io.Reader, psbtVersion uint32) error {
 				return ErrInvalidKeyData
 			}
 
-			pi.MwebCommit = mw.ReadCommitment(kvPair.valueData)
-			if pi.MwebCommit == nil {
+			pi.MwebCommit = new(mw.Commitment)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pi.MwebCommit)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebSpentOutputPubKeyType:
@@ -523,18 +524,20 @@ func (pi *PInput) deserialize(r io.Reader, psbtVersion uint32) error {
 				return ErrInvalidKeyData
 			}
 
-			pi.MwebOutputPubkey, err = mw.ReadPublicKey(kvPair.valueData)
+			pi.MwebOutputPubkey = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pi.MwebOutputPubkey)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebInputPubKeyType:
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
 
-			pi.MwebInputPubkey, err = mw.ReadPublicKey(kvPair.valueData)
+			pi.MwebInputPubkey = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pi.MwebInputPubkey)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebInputFeaturesType:
 			if kvPair.keyData != nil {
@@ -551,8 +554,9 @@ func (pi *PInput) deserialize(r io.Reader, psbtVersion uint32) error {
 				return ErrInvalidKeyData
 			}
 
-			pi.MwebInputSig = mw.ReadSignature(kvPair.valueData)
-			if pi.MwebInputSig == nil {
+			pi.MwebInputSig = new(mw.Signature)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pi.MwebInputSig)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebAddressIndexType:
@@ -588,9 +592,10 @@ func (pi *PInput) deserialize(r io.Reader, psbtVersion uint32) error {
 				return ErrInvalidKeyData
 			}
 
-			pi.MwebKeyExchangePubkey, err = mw.ReadPublicKey(kvPair.valueData)
+			pi.MwebKeyExchangePubkey = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pi.MwebKeyExchangePubkey)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebMasterScanKeyOriginType:
 			if pi.MwebMasterScanKey != nil {

@@ -91,8 +91,9 @@ func (pk *PKernel) deserialize(r io.Reader) error {
 				return ErrInvalidKeyData
 			}
 
-			pk.ExcessCommitment = mw.ReadCommitment(kvPair.valueData)
-			if pk.ExcessCommitment == nil {
+			pk.ExcessCommitment = new(mw.Commitment)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pk.ExcessCommitment)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebKernelStealthCommitType:
@@ -100,9 +101,10 @@ func (pk *PKernel) deserialize(r io.Reader) error {
 				return ErrInvalidKeyData
 			}
 
-			pk.StealthExcess, err = mw.ReadPublicKey(kvPair.valueData)
+			pk.StealthExcess = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pk.StealthExcess)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebKernelFeeType:
 			if kvPair.keyData != nil {
@@ -160,8 +162,9 @@ func (pk *PKernel) deserialize(r io.Reader) error {
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			pk.Signature = mw.ReadSignature(kvPair.valueData)
-			if pk.Signature == nil {
+			pk.Signature = new(mw.Signature)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, pk.Signature)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		default:

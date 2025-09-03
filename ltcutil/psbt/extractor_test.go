@@ -42,6 +42,7 @@ func TestExtract_ValidMWEB(t *testing.T) {
 			MwebFeatures:  &outputFeatures,
 			OutputCommit:  &mw.Commitment{},
 			SenderPubkey:  &mw.PublicKey{},
+			OutputPubkey:  &mw.PublicKey{},
 			RangeProof:    &secp256k1.RangeProof{},
 			MwebSignature: &mw.Signature{},
 		}},

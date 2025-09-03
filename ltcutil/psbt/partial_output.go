@@ -252,21 +252,19 @@ func (po *POutput) deserialize(r io.Reader, psbtVersion uint32) error {
 				return ErrInvalidPsbtFormat
 			}
 
-			po.StealthAddress = new(mw.StealthAddress)
-			po.StealthAddress.Scan, err = mw.ReadPublicKey(kvPair.valueData[0:33])
+			var keys [2]mw.PublicKey
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, &keys)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
-			po.StealthAddress.Spend, err = mw.ReadPublicKey(kvPair.valueData[33:])
-			if err != nil {
-				return err
-			}
+			po.StealthAddress = &mw.StealthAddress{Scan: &keys[0], Spend: &keys[1]}
 		case MwebCommitOutputType:
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			po.OutputCommit = mw.ReadCommitment(kvPair.valueData)
-			if po.OutputCommit == nil {
+			po.OutputCommit = new(mw.Commitment)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, po.OutputCommit)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebFeaturesOutputType:
@@ -283,17 +281,19 @@ func (po *POutput) deserialize(r io.Reader, psbtVersion uint32) error {
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			po.SenderPubkey, err = mw.ReadPublicKey(kvPair.valueData)
+			po.SenderPubkey = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, po.SenderPubkey)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebOutputPubKeyOutputType:
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			po.OutputPubkey, err = mw.ReadPublicKey(kvPair.valueData)
+			po.OutputPubkey = new(mw.PublicKey)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, po.OutputPubkey)
 			if err != nil {
-				return err
+				return ErrInvalidPsbtFormat
 			}
 		case MwebStandardFieldsOutputType:
 			if kvPair.keyData != nil {
@@ -302,12 +302,11 @@ func (po *POutput) deserialize(r io.Reader, psbtVersion uint32) error {
 			if len(kvPair.valueData) != 33+1+8+16 {
 				return ErrInvalidPsbtFormat
 			}
-			keyExchangePubkey, err := mw.ReadPublicKey(kvPair.valueData[0:33])
-			if err != nil {
-				return err
-			}
 			po.MwebStandardFields = new(standardMwebOutputFields)
-			po.MwebStandardFields.KeyExchangePubkey = *keyExchangePubkey
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, &po.MwebStandardFields.KeyExchangePubkey)
+			if err != nil {
+				return ErrInvalidPsbtFormat
+			}
 			po.MwebStandardFields.ViewTag = kvPair.valueData[33]
 			po.MwebStandardFields.EncryptedValue = binary.LittleEndian.Uint64(kvPair.valueData[34:42])
 			copy(po.MwebStandardFields.EncryptedNonce[:], kvPair.valueData[42:58])
@@ -315,16 +314,18 @@ func (po *POutput) deserialize(r io.Reader, psbtVersion uint32) error {
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			po.RangeProof = secp256k1.ReadRangeProof(kvPair.valueData)
-			if po.RangeProof == nil {
+			po.RangeProof = new(secp256k1.RangeProof)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, po.RangeProof)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebSignatureOutputType:
 			if kvPair.keyData != nil {
 				return ErrInvalidKeyData
 			}
-			po.MwebSignature = mw.ReadSignature(kvPair.valueData)
-			if po.MwebSignature == nil {
+			po.MwebSignature = new(mw.Signature)
+			_, err = binary.Decode(kvPair.valueData, binary.LittleEndian, po.MwebSignature)
+			if err != nil {
 				return ErrInvalidPsbtFormat
 			}
 		case MwebExtraDataOutputType:

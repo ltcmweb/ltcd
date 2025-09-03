@@ -682,6 +682,9 @@ func TestFinalize2of3(t *testing.T) {
 		t.Fatalf("Error decoding hex: %v", err)
 	}
 	p, err := NewFromRawBytes(bytes.NewReader(b), false)
+	if err != nil {
+		t.Fatalf("Error in NewFromRawBytes: %v", err)
+	}
 	if p.IsComplete() {
 		t.Fatalf("Psbt is complete")
 	}

@@ -1,6 +1,7 @@
 package psbt
 
 import (
+	"crypto/rand"
 	"encoding/binary"
 	"errors"
 	"math/big"
@@ -16,7 +17,8 @@ import (
 
 func generateUnsignedPInput(features wire.MwebInputFeatureBit, stealthAddress mw.StealthAddress) *PInput {
 	amount := ltcutil.Amount(123456)
-	senderKey, _ := mw.NewSecretKey()
+	var senderKey mw.SecretKey
+	rand.Read(senderKey[:])
 
 	// Generate 128-bit secret nonce 'n' = Hash128(T_nonce, sender_privkey)
 	n := new(big.Int).SetBytes(mw.Hashed(mw.HashTagNonce, senderKey[:])[:16])
@@ -53,8 +55,7 @@ func generateUnsignedPInput(features wire.MwebInputFeatureBit, stealthAddress mw
 	}
 
 	var outputId chainhash.Hash
-	tmp, _ := mw.NewSecretKey()
-	copy(outputId[:], tmp[:])
+	rand.Read(outputId[:])
 
 	pi := PInput{
 		MwebOutputId:          &outputId,
@@ -77,8 +78,9 @@ func generateUnsignedPOutput(features wire.MwebOutputMessageFeatureBit) *POutput
 
 	amount := ltcutil.Amount(345678)
 
-	scanKey, _ := mw.NewSecretKey()
-	spendKey, _ := mw.NewSecretKey()
+	var scanKey, spendKey mw.SecretKey
+	rand.Read(scanKey[:])
+	rand.Read(spendKey[:])
 	stealthAddress := mw.StealthAddress{Scan: scanKey.PubKey(), Spend: spendKey.PubKey()}
 
 	po := POutput{
@@ -146,9 +148,9 @@ func generateUnsignedPKernel(features wire.MwebKernelFeatureBit) *PKernel {
 }
 
 func TestSignMwebComponents(t *testing.T) {
-	masterScanKey, _ := mw.NewSecretKey()
-	masterSpendKey, _ := mw.NewSecretKey()
-	mwebKeychain := mweb.Keychain{Scan: masterScanKey, Spend: masterSpendKey}
+	mwebKeychain := &mweb.Keychain{Scan: new(mw.SecretKey), Spend: new(mw.SecretKey)}
+	rand.Read(mwebKeychain.Scan[:])
+	rand.Read(mwebKeychain.Spend[:])
 
 	inputFeatures := wire.MwebInputStealthKeyFeatureBit
 	addrIdx := uint32(10)

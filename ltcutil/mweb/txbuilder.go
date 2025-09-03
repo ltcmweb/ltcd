@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	"github.com/ltcmweb/ltcd/chaincfg/chainhash"
 	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
 	"github.com/ltcmweb/ltcd/txscript"
 	"github.com/ltcmweb/ltcd/wire"
@@ -294,9 +295,9 @@ func CreateKernel(blind, stealthBlind *mw.BlindingFactor,
 	return k
 }
 
-func NewPegin(value uint64, kernel *wire.MwebKernel) *wire.TxOut {
+func NewPegin(value uint64, kernelHash *chainhash.Hash) *wire.TxOut {
 	script, _ := txscript.NewScriptBuilder().
 		AddOp(txscript.MwebPeginWitnessVersion + txscript.OP_1 - 1).
-		AddData(kernel.Hash()[:]).Script()
+		AddData(kernelHash[:]).Script()
 	return wire.NewTxOut(int64(value), script)
 }
