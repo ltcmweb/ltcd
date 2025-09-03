@@ -3,11 +3,11 @@ package psbt
 import (
 	"testing"
 
-	"github.com/ltcsuite/ltcd/chaincfg/chainhash"
-	"github.com/ltcsuite/secp256k1"
+	"github.com/ltcmweb/ltcd/chaincfg/chainhash"
+	"github.com/ltcmweb/secp256k1"
 
-	"github.com/ltcsuite/ltcd/ltcutil/mweb/mw"
-	"github.com/ltcsuite/ltcd/wire"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
+	"github.com/ltcmweb/ltcd/wire"
 	"github.com/stretchr/testify/require"
 )
 

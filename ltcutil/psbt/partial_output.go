@@ -5,10 +5,10 @@ import (
 	"io"
 	"sort"
 
-	"github.com/ltcsuite/ltcd/ltcutil"
-	"github.com/ltcsuite/ltcd/ltcutil/mweb/mw"
-	"github.com/ltcsuite/ltcd/wire"
-	"github.com/ltcsuite/secp256k1"
+	"github.com/ltcmweb/ltcd/ltcutil"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
+	"github.com/ltcmweb/ltcd/wire"
+	"github.com/ltcmweb/secp256k1"
 )
 
 // POutput is a struct encapsulating all the data that can be attached

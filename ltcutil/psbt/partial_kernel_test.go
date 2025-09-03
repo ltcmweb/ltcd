@@ -3,9 +3,10 @@ package psbt
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/ltcsuite/ltcd/ltcutil"
-	"github.com/ltcsuite/ltcd/wire"
 	"testing"
+
+	"github.com/ltcmweb/ltcd/ltcutil"
+	"github.com/ltcmweb/ltcd/wire"
 )
 
 func TestAllKernelFieldsPopulated(t *testing.T) {

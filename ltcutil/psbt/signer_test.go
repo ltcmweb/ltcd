@@ -3,14 +3,15 @@ package psbt
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/ltcsuite/ltcd/chaincfg/chainhash"
-	"github.com/ltcsuite/ltcd/ltcutil"
-	"github.com/ltcsuite/ltcd/ltcutil/mweb"
-	"github.com/ltcsuite/ltcd/ltcutil/mweb/mw"
-	"github.com/ltcsuite/ltcd/wire"
-	"lukechampine.com/blake3"
 	"math/big"
 	"testing"
+
+	"github.com/ltcmweb/ltcd/chaincfg/chainhash"
+	"github.com/ltcmweb/ltcd/ltcutil"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
+	"github.com/ltcmweb/ltcd/wire"
+	"lukechampine.com/blake3"
 )
 
 func generateUnsignedPInput(features wire.MwebInputFeatureBit, stealthAddress mw.StealthAddress) *PInput {

@@ -3,10 +3,11 @@ package psbt
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/ltcsuite/ltcd/ltcutil"
-	"github.com/ltcsuite/ltcd/ltcutil/mweb/mw"
-	"github.com/ltcsuite/ltcd/wire"
 	"io"
+
+	"github.com/ltcmweb/ltcd/ltcutil"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
+	"github.com/ltcmweb/ltcd/wire"
 )
 
 // PKernel is a struct encapsulating all the data that can be attached to any

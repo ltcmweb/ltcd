@@ -14,12 +14,12 @@ import (
 	"errors"
 	"io"
 
-	"github.com/ltcsuite/ltcd/chaincfg/chainhash"
-	"github.com/ltcsuite/ltcd/ltcutil/hdkeychain"
-	"github.com/ltcsuite/ltcd/ltcutil/mweb/mw"
+	"github.com/ltcmweb/ltcd/chaincfg/chainhash"
+	"github.com/ltcmweb/ltcd/ltcutil/hdkeychain"
+	"github.com/ltcmweb/ltcd/ltcutil/mweb/mw"
 
-	"github.com/ltcsuite/ltcd/ltcutil"
-	"github.com/ltcsuite/ltcd/wire"
+	"github.com/ltcmweb/ltcd/ltcutil"
+	"github.com/ltcmweb/ltcd/wire"
 )
 
 // psbtMagicLength is the length of the magic bytes used to signal the start of

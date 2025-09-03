@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/ltcsuite/ltcd/btcec/v2"
-	"github.com/ltcsuite/ltcd/ltcutil/base58"
-	"github.com/ltcsuite/ltcd/ltcutil/hdkeychain"
 	"math/big"
+
+	"github.com/ltcmweb/ltcd/btcec/v2"
+	"github.com/ltcmweb/ltcd/ltcutil/base58"
+	"github.com/ltcmweb/ltcd/ltcutil/hdkeychain"
 )
 
 const BIP32_EXTKEY_SIZE = 74
