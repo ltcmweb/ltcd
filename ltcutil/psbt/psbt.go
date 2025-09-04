@@ -320,6 +320,16 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 
 	// Next we parse the GLOBAL section. Parse all keys and break after separator
 	for {
+		kvPair, err = getKVPair(r)
+		if err != nil {
+			return nil, err
+		}
+
+		// If this is separator byte (nil kvPair), this section is done.
+		if kvPair == nil {
+			break
+		}
+
 		// According to BIP-0174, <key> := <keylen><keytype><keydata> must be unique per map
 		if !globalKeys.addKey(kvPair.keyType, kvPair.keyData) {
 			return nil, ErrDuplicateKey
@@ -441,16 +451,6 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 			}
 
 			unknownSlice = append(unknownSlice, newUnknown)
-		}
-
-		kvPair, err = getKVPair(r)
-		if err != nil {
-			return nil, err
-		}
-
-		// If this is separator byte (nil kvPair), this section is done.
-		if kvPair == nil {
-			break
 		}
 	}
 

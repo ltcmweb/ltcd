@@ -57,7 +57,7 @@ const (
 func (u *Updater) Sign(inIndex int, sig []byte, pubKey []byte,
 	redeemScript []byte, witnessScript []byte) (SignOutcome, error) {
 
-	pInput := u.Upsbt.Inputs[inIndex]
+	pInput := &u.Upsbt.Inputs[inIndex]
 	if pInput.isFinalized() {
 		return SignFinalized, nil
 	}
