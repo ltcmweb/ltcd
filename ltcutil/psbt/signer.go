@@ -461,8 +461,8 @@ func signMwebKernel(pk *PKernel) (*mw.BlindingFactor, *mw.SecretKey, error) {
 		lockHeight = *pk.LockHeight
 	}
 
-	blind := (*mw.BlindingFactor)(&sigKey)
-	kernelExcess := *mw.NewCommitment(blind, 0)
+	blind := mw.BlindingFactor(sigKey)
+	kernelExcess := *mw.NewCommitment(&blind, 0)
 	var stealthKey mw.SecretKey
 	var stealthExcess mw.PublicKey
 	if *pk.Features&wire.MwebKernelStealthExcessFeatureBit > 0 {
@@ -494,7 +494,7 @@ func signMwebKernel(pk *PKernel) (*mw.BlindingFactor, *mw.SecretKey, error) {
 		pk.StealthExcess = &stealthExcess
 	}
 	pk.Signature = &signature
-	return blind, &stealthKey, nil
+	return &blind, &stealthKey, nil
 }
 
 type OutputKeyDerivationFunc func(spentOutputPk *mw.PublicKey, keyExchangePubKey *mw.PublicKey, sharedSecret *mw.SecretKey) (preBlind *mw.BlindingFactor, outputSpendKey *mw.SecretKey, err error)
