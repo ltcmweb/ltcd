@@ -332,6 +332,7 @@ func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 	if p.PsbtVersion >= 2 {
 		newInput.PrevoutHash = pInput.PrevoutHash
 		newInput.PrevoutIndex = pInput.PrevoutIndex
+		newInput.Sequence = pInput.Sequence
 	}
 
 	// Overwrite the entry in the input list at the correct index. Note
@@ -479,6 +480,7 @@ func finalizeWitnessInput(p *Packet, inIndex int) error {
 	if p.PsbtVersion >= 2 {
 		newInput.PrevoutHash = pInput.PrevoutHash
 		newInput.PrevoutIndex = pInput.PrevoutIndex
+		newInput.Sequence = pInput.Sequence
 	}
 
 	// Finally, we overwrite the entry in the input list at the correct
@@ -581,6 +583,7 @@ func finalizeTaprootInput(p *Packet, inIndex int) error {
 	if p.PsbtVersion >= 2 {
 		newInput.PrevoutHash = pInput.PrevoutHash
 		newInput.PrevoutIndex = pInput.PrevoutIndex
+		newInput.Sequence = pInput.Sequence
 	}
 
 	// Finally, we overwrite the entry in the input list at the correct
