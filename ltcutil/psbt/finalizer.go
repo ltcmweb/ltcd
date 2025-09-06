@@ -329,6 +329,11 @@ func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 	newInput := NewPsbtInput(pInput.NonWitnessUtxo, nil)
 	newInput.FinalScriptSig = sigScript
 
+	if p.PsbtVersion >= 2 {
+		newInput.PrevoutHash = pInput.PrevoutHash
+		newInput.PrevoutIndex = pInput.PrevoutIndex
+	}
+
 	// Overwrite the entry in the input list at the correct index. Note
 	// that this removes all the other entries in the list for this input
 	// index.
@@ -471,6 +476,11 @@ func finalizeWitnessInput(p *Packet, inIndex int) error {
 
 	newInput.FinalScriptWitness = serializedWitness
 
+	if p.PsbtVersion >= 2 {
+		newInput.PrevoutHash = pInput.PrevoutHash
+		newInput.PrevoutIndex = pInput.PrevoutIndex
+	}
+
 	// Finally, we overwrite the entry in the input list at the correct
 	// index.
 	p.Inputs[inIndex] = *newInput
@@ -567,6 +577,11 @@ func finalizeTaprootInput(p *Packet, inIndex int) error {
 	// finalscriptwitness (08).
 	newInput := NewPsbtInput(nil, pInput.WitnessUtxo)
 	newInput.FinalScriptWitness = serializedWitness
+
+	if p.PsbtVersion >= 2 {
+		newInput.PrevoutHash = pInput.PrevoutHash
+		newInput.PrevoutIndex = pInput.PrevoutIndex
+	}
 
 	// Finally, we overwrite the entry in the input list at the correct
 	// index.
