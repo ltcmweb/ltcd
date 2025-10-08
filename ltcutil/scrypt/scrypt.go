@@ -1,19 +1,27 @@
 package scrypt
 
-type Hash struct{ Key, Val []byte }
+import "sync/atomic"
 
-var cache map[string][]byte
+type (
+	Hash    struct{ Key, Val []byte }
+	hashMap map[string][]byte
+)
+
+var cache atomic.Value
 
 func Scrypt(x []byte) []byte {
-	if x, ok := cache[string(x)]; ok {
-		return x
+	if m, ok := cache.Load().(hashMap); ok {
+		if x, ok := m[string(x)]; ok {
+			return x
+		}
 	}
 	return scrypt(x)
 }
 
 func SetCache(hashes []Hash) {
-	cache = map[string][]byte{}
+	m := hashMap{}
 	for _, hash := range hashes {
-		cache[string(hash.Key)] = hash.Val
+		m[string(hash.Key)] = hash.Val
 	}
+	cache.Store(m)
 }
