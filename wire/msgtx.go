@@ -94,7 +94,7 @@ const (
 	// scripts per transaction being simultaneously deserialized by 125
 	// peers.  Thus, the peak usage of the free list is 12,500 * 512 =
 	// 6,400,000 bytes.
-	freeListMaxItems = 12500
+	freeListMaxItems = 125
 
 	// maxWitnessItemsPerInput is the maximum number of witness items to
 	// be read for the witness data for a single TxIn. This number is
