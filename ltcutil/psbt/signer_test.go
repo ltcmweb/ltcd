@@ -166,9 +166,9 @@ func TestSignMwebComponents(t *testing.T) {
 		PsbtVersion:       2,
 		MwebTxOffset:      nil,
 		MwebStealthOffset: nil,
-		Inputs:            []PInput{*pi},
-		Outputs:           []POutput{*po},
-		Kernels:           []PKernel{*pk},
+		Inputs:            []*PInput{pi},
+		Outputs:           []*POutput{po},
+		Kernels:           []*PKernel{pk},
 	}
 
 	deriveOutputKeys := func(spentOutputPk *mw.PublicKey, keyExchangePubKey *mw.PublicKey, spentOutputSharedSecret *mw.SecretKey) (*mw.BlindingFactor, *mw.SecretKey, error) {

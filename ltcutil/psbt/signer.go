@@ -57,7 +57,7 @@ const (
 func (u *Updater) Sign(inIndex int, sig []byte, pubKey []byte,
 	redeemScript []byte, witnessScript []byte) (SignOutcome, error) {
 
-	pInput := &u.Upsbt.Inputs[inIndex]
+	pInput := u.Upsbt.Inputs[inIndex]
 	if pInput.isFinalized() {
 		return SignFinalized, nil
 	}
@@ -218,7 +218,7 @@ func (s *Signer) SignMwebComponents() (SignOutcome, error) {
 	}
 
 	for i := range p.Inputs {
-		input := &p.Inputs[i]
+		input := p.Inputs[i]
 		if !input.isMWEB() || input.isFinalized() {
 			continue
 		}
@@ -236,7 +236,7 @@ func (s *Signer) SignMwebComponents() (SignOutcome, error) {
 	}
 
 	for i := range p.Outputs {
-		output := &p.Outputs[i]
+		output := p.Outputs[i]
 		if !output.isMWEB() || output.isFinalized() {
 			continue
 		}
@@ -254,7 +254,7 @@ func (s *Signer) SignMwebComponents() (SignOutcome, error) {
 	}
 
 	for i := range p.Kernels {
-		kernel := &p.Kernels[i]
+		kernel := p.Kernels[i]
 		if kernel.isFinalized() {
 			continue
 		}

@@ -14,7 +14,7 @@ func TestSumUtxoInputValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not create packet from TX: %v", err)
 	}
-	badPacket.Inputs = append(badPacket.Inputs, PInput{})
+	badPacket.Inputs = append(badPacket.Inputs, &PInput{})
 
 	_, err = SumUtxoInputValues(badPacket)
 	if err == nil {
@@ -301,8 +301,8 @@ func TestVerifyInputOutputLen(t *testing.T) {
 				TxIn:  []*wire.TxIn{{}},
 				TxOut: []*wire.TxOut{{}},
 			},
-			Inputs:  []PInput{{}},
-			Outputs: []POutput{{}},
+			Inputs:  []*PInput{{}},
+			Outputs: []*POutput{{}},
 		},
 		needInputs:  true,
 		needOutputs: true,

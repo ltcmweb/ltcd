@@ -138,12 +138,12 @@ func isFinalizable(p *Packet, inIndex int) bool {
 	// A witness input must be either native P2WSH or nested P2SH with all
 	// relevant sigScript or witness data populated.
 	case pInput.WitnessUtxo != nil:
-		if !isFinalizableWitnessInput(&pInput) {
+		if !isFinalizableWitnessInput(pInput) {
 			return false
 		}
 
 	case pInput.NonWitnessUtxo != nil:
-		if !isFinalizableLegacyInput(p, &pInput, inIndex) {
+		if !isFinalizableLegacyInput(p, pInput, inIndex) {
 			return false
 		}
 
@@ -263,7 +263,7 @@ func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 	for _, ps := range pInput.PartialSigs {
 		pubKeys = append(pubKeys, ps.PubKey)
 
-		sigOK := checkSigHashFlags(ps.Signature, &pInput)
+		sigOK := checkSigHashFlags(ps.Signature, pInput)
 		if !sigOK {
 			return ErrInvalidSigHashFlags
 		}
@@ -338,7 +338,7 @@ func finalizeNonWitnessInput(p *Packet, inIndex int) error {
 	// Overwrite the entry in the input list at the correct index. Note
 	// that this removes all the other entries in the list for this input
 	// index.
-	p.Inputs[inIndex] = *newInput
+	p.Inputs[inIndex] = newInput
 
 	return nil
 }
@@ -372,7 +372,7 @@ func finalizeWitnessInput(p *Packet, inIndex int) error {
 	for _, ps := range pInput.PartialSigs {
 		pubKeys = append(pubKeys, ps.PubKey)
 
-		sigOK := checkSigHashFlags(ps.Signature, &pInput)
+		sigOK := checkSigHashFlags(ps.Signature, pInput)
 		if !sigOK {
 			return ErrInvalidSigHashFlags
 
@@ -485,7 +485,7 @@ func finalizeWitnessInput(p *Packet, inIndex int) error {
 
 	// Finally, we overwrite the entry in the input list at the correct
 	// index.
-	p.Inputs[inIndex] = *newInput
+	p.Inputs[inIndex] = newInput
 	return nil
 }
 
@@ -503,7 +503,7 @@ func finalizeTaprootInput(p *Packet, inIndex int) error {
 	var (
 		serializedWitness []byte
 		err               error
-		pInput            = &p.Inputs[inIndex]
+		pInput            = p.Inputs[inIndex]
 	)
 
 	// What spend path did we take?
@@ -588,6 +588,6 @@ func finalizeTaprootInput(p *Packet, inIndex int) error {
 
 	// Finally, we overwrite the entry in the input list at the correct
 	// index.
-	p.Inputs[inIndex] = *newInput
+	p.Inputs[inIndex] = newInput
 	return nil
 }

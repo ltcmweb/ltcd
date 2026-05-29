@@ -14,8 +14,8 @@ func TestInPlaceSort(t *testing.T) {
 		packet        *Packet
 		expectedTxIn  []*wire.TxIn
 		expectedTxOut []*wire.TxOut
-		expectedPIn   []PInput
-		expectedPOut  []POutput
+		expectedPIn   []*PInput
+		expectedPOut  []*POutput
 		expectErr     bool
 	}{{
 		name:      "packet nil",
@@ -49,7 +49,7 @@ func TestInPlaceSort(t *testing.T) {
 			// Abuse the SighashType as an index to make sure the
 			// partial inputs are also sorted together with the wire
 			// inputs.
-			Inputs: []PInput{{
+			Inputs: []*PInput{{
 				SighashType: 0,
 			}, {
 				SighashType: 1,
@@ -73,7 +73,7 @@ func TestInPlaceSort(t *testing.T) {
 				Index: 7,
 			},
 		}},
-		expectedPIn: []PInput{{
+		expectedPIn: []*PInput{{
 			SighashType: 2,
 		}, {
 			SighashType: 1,
@@ -99,7 +99,7 @@ func TestInPlaceSort(t *testing.T) {
 			// Abuse the RedeemScript as an index to make sure the
 			// partial inputs are also sorted together with the wire
 			// inputs.
-			Outputs: []POutput{{
+			Outputs: []*POutput{{
 				RedeemScript: []byte{0},
 			}, {
 				RedeemScript: []byte{1},
@@ -117,7 +117,7 @@ func TestInPlaceSort(t *testing.T) {
 			PkScript: []byte{77, 88},
 			Value:    12,
 		}},
-		expectedPOut: []POutput{{
+		expectedPOut: []*POutput{{
 			RedeemScript: []byte{2},
 		}, {
 			RedeemScript: []byte{0},

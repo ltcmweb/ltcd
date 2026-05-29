@@ -14,7 +14,7 @@ import (
 func TestExtract_NonFinalized(t *testing.T) {
 	p := &Packet{
 		PsbtVersion: 2,
-		Inputs:      []PInput{{}}, // not finalized
+		Inputs:      []*PInput{{}}, // not finalized
 	}
 
 	_, err := Extract(p)
@@ -30,7 +30,7 @@ func TestExtract_ValidMWEB(t *testing.T) {
 		PsbtVersion:       2,
 		MwebTxOffset:      &mw.BlindingFactor{},
 		MwebStealthOffset: &mw.BlindingFactor{},
-		Inputs: []PInput{{
+		Inputs: []*PInput{{
 			MwebFeatures:     &inputFeatures,
 			MwebCommit:       &mw.Commitment{},
 			MwebOutputId:     &chainhash.Hash{},
@@ -38,7 +38,7 @@ func TestExtract_ValidMWEB(t *testing.T) {
 			MwebOutputPubkey: &mw.PublicKey{},
 			MwebInputSig:     &mw.Signature{},
 		}},
-		Outputs: []POutput{{
+		Outputs: []*POutput{{
 			MwebFeatures:  &outputFeatures,
 			OutputCommit:  &mw.Commitment{},
 			SenderPubkey:  &mw.PublicKey{},
@@ -46,7 +46,7 @@ func TestExtract_ValidMWEB(t *testing.T) {
 			RangeProof:    &secp256k1.RangeProof{},
 			MwebSignature: &mw.Signature{},
 		}},
-		Kernels: []PKernel{{
+		Kernels: []*PKernel{{
 			Features:         &kernelFeatures,
 			ExcessCommitment: &mw.Commitment{},
 			Signature:        &mw.Signature{},

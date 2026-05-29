@@ -38,24 +38,24 @@ func New(inputs []*wire.OutPoint,
 	unsignedTx := wire.NewMsgTx(version)
 	unsignedTx.LockTime = nLockTime
 
-	var psbtInputs []PInput
+	var psbtInputs []*PInput
 	for i, in := range inputs {
 		unsignedTx.AddTxIn(&wire.TxIn{
 			PreviousOutPoint: *in,
 			Sequence:         nSequences[i],
 		})
-		psbtInputs = append(psbtInputs, PInput{
+		psbtInputs = append(psbtInputs, &PInput{
 			PrevoutHash:  &in.Hash,
 			PrevoutIndex: &in.Index,
 			Sequence:     &nSequences[i],
 		})
 	}
 
-	var psbtOutputs []POutput
+	var psbtOutputs []*POutput
 	for _, out := range outputs {
 		unsignedTx.AddTxOut(out)
 		amount := ltcutil.Amount(out.Value)
-		psbtOutputs = append(psbtOutputs, POutput{
+		psbtOutputs = append(psbtOutputs, &POutput{
 			Amount:   amount,
 			PKScript: out.PkScript,
 		})
@@ -64,13 +64,13 @@ func New(inputs []*wire.OutPoint,
 	return newWithVersion(0, unsignedTx, psbtInputs, psbtOutputs, nil, version, &nLockTime)
 }
 
-func NewV2(inputs []PInput, outputs []POutput, kernels []PKernel,
+func NewV2(inputs []*PInput, outputs []*POutput, kernels []*PKernel,
 	txVersion int32, fallbackLocktime *uint32) (*Packet, error) {
 
 	return newWithVersion(2, nil, inputs, outputs, kernels, txVersion, fallbackLocktime)
 }
 
-func newWithVersion(psbtVersion uint32, unsignedTx *wire.MsgTx, inputs []PInput, outputs []POutput, kernels []PKernel,
+func newWithVersion(psbtVersion uint32, unsignedTx *wire.MsgTx, inputs []*PInput, outputs []*POutput, kernels []*PKernel,
 	txVersion int32, fallbackLocktime *uint32) (*Packet, error) {
 
 	if txVersion < MinTxVersion {

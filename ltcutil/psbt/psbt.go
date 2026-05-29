@@ -164,15 +164,15 @@ type Packet struct {
 
 	// Inputs contains all the information needed to properly sign this
 	// target input within the above transaction.
-	Inputs []PInput
+	Inputs []*PInput
 
 	// Outputs contains all information required to spend any outputs
 	// produced by this PSBT.
-	Outputs []POutput
+	Outputs []*POutput
 
 	// Kernels contains information about MWEB pegins and pegouts.
 	// For signed MWEB txs, this will contain all info required to build finalized kernels.
-	Kernels []PKernel
+	Kernels []*PKernel
 
 	// Unknowns are the set of custom types (global only) within this PSBT.
 	Unknowns []*Unknown
@@ -210,9 +210,18 @@ func NewFromUnsignedTx(tx *wire.MsgTx) (*Packet, error) {
 	//	mwebKernelOffset = &tx.Mweb.KernelOffset
 	//	mwebStealthOffset = &tx.Mweb.StealthOffset
 	//}
-	inSlice := make([]PInput, numInputs)
-	outSlice := make([]POutput, numOutputs)
-	kernSlice := make([]PKernel, numKernels)
+	inSlice := make([]*PInput, numInputs)
+	for i := range inSlice {
+		inSlice[i] = &PInput{}
+	}
+	outSlice := make([]*POutput, numOutputs)
+	for i := range outSlice {
+		outSlice[i] = &POutput{}
+	}
+	kernSlice := make([]*PKernel, numKernels)
+	for i := range kernSlice {
+		kernSlice[i] = &PKernel{}
+	}
 	unknownSlice := make([]*Unknown, 0)
 
 	return &Packet{
@@ -464,9 +473,9 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 	}
 
 	// Next we parse the INPUT section.
-	inSlice := make([]PInput, *inputCount)
+	inSlice := make([]*PInput, *inputCount)
 	for i := 0; i < *inputCount; i++ {
-		input := PInput{}
+		input := &PInput{}
 		err = input.deserialize(r, *psbtVersion)
 		if err != nil {
 			return nil, err
@@ -476,9 +485,9 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 	}
 
 	// Next we parse the OUTPUT section.
-	outSlice := make([]POutput, *outputCount)
+	outSlice := make([]*POutput, *outputCount)
 	for i := 0; i < *outputCount; i++ {
-		output := POutput{}
+		output := &POutput{}
 		err = output.deserialize(r, *psbtVersion)
 		if err != nil {
 			return nil, err
@@ -488,9 +497,9 @@ func NewFromRawBytes(r io.Reader, b64 bool) (*Packet, error) {
 	}
 
 	// Next we parse the KERNEL section.
-	kernelSlice := make([]PKernel, *kernelCount)
+	kernelSlice := make([]*PKernel, *kernelCount)
 	for i := 0; i < *kernelCount; i++ {
-		kernel := PKernel{}
+		kernel := &PKernel{}
 		err = kernel.deserialize(r)
 		if err != nil {
 			return nil, err

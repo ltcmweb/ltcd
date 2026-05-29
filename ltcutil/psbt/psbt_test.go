@@ -255,7 +255,7 @@ func TestSanityCheck(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to deserialize: %v", err)
 	}
-	inputs1 := &psbt1.Inputs[1]
+	inputs1 := psbt1.Inputs[1]
 	inputs1.NonWitnessUtxo = nonWitnessUtxo
 
 	// The PSBT is now in an inconsistent state; Updater creation should
@@ -909,7 +909,7 @@ func TestImportFromCore1(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error deserializing transaction: %v", err)
 	}
-	psbtBorkedInput2.Inputs[1] = *NewPsbtInput(wrongTx, nil)
+	psbtBorkedInput2.Inputs[1] = NewPsbtInput(wrongTx, nil)
 	res, err = borkedUpdater.Sign(1, sig2, pub2, nil, nil)
 	if err != ErrInvalidSignatureForInput {
 		t.Fatalf("Error should have been invalid sig for input, was: %v", err)
@@ -1477,8 +1477,8 @@ func TestWitnessForNonWitnessUtxo(t *testing.T) {
 				Value:    1.9 * ltcutil.SatoshiPerBitcoin,
 			}},
 		},
-		Inputs:  []PInput{{}},
-		Outputs: []POutput{{}},
+		Inputs:  []*PInput{{}},
+		Outputs: []*POutput{{}},
 	}
 
 	// Create an updater for the packet. This also performs a sanity check.

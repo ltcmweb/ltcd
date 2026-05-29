@@ -85,7 +85,7 @@ func ExtractUnsignedTx(p *Packet) (*wire.MsgTx, error) {
 
 		for _, pi := range p.Inputs {
 			if !pi.isMWEB() {
-				txin, err := extractTxIn(&pi, false)
+				txin, err := extractTxIn(pi, false)
 				if err != nil {
 					return nil, err
 				}
@@ -104,7 +104,7 @@ func ExtractUnsignedTx(p *Packet) (*wire.MsgTx, error) {
 		for _, pk := range p.Kernels {
 			if pk.PeginAmount != nil {
 				kernelHash := &chainhash.Hash{}
-				kernel, _ := extractKernel(&pk)
+				kernel, _ := extractKernel(pk)
 				if kernel != nil {
 					kernelHash = kernel.Hash()
 				}
@@ -130,7 +130,7 @@ func extractV2(p *Packet) (*wire.MsgTx, error) {
 
 	for _, pi := range p.Inputs {
 		if !pi.isMWEB() {
-			txin, err := extractTxIn(&pi, true)
+			txin, err := extractTxIn(pi, true)
 			if err != nil {
 				return nil, err
 			}
@@ -155,7 +155,7 @@ func extractV2(p *Packet) (*wire.MsgTx, error) {
 		var inputs []*wire.MwebInput
 		for _, pi := range p.Inputs {
 			if pi.isMWEB() {
-				input, err := extractMwebInput(&pi)
+				input, err := extractMwebInput(pi)
 				if err != nil {
 					return nil, err
 				}
@@ -167,7 +167,7 @@ func extractV2(p *Packet) (*wire.MsgTx, error) {
 		var outputs []*wire.MwebOutput
 		for _, po := range p.Outputs {
 			if po.isMWEB() {
-				output, err := extractMwebOutput(&po)
+				output, err := extractMwebOutput(po)
 				if err != nil {
 					return nil, err
 				}
@@ -178,7 +178,7 @@ func extractV2(p *Packet) (*wire.MsgTx, error) {
 		// Extract MWEB Kernels
 		var kernels []*wire.MwebKernel
 		for _, pk := range p.Kernels {
-			kernel, err := extractKernel(&pk)
+			kernel, err := extractKernel(pk)
 			if err != nil {
 				return nil, err
 			}
